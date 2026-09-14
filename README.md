@@ -1,460 +1,76 @@
 # LinuxDeviceInspector
 
-**LinuxDeviceInspector** is a read-only Linux hardware and system inspection tool written in Bash.
+**LinuxDeviceInspector** is an open-source Linux hardware inspection and device information tool created by **Manoj Bhatta**.
 
-It provides an interactive terminal interface for inspecting system information, CPU, memory, storage, SMART/NVMe health, battery, temperature, performance, networking, and available diagnostic utilities.
+It is designed to help Linux users inspect their system hardware, storage, battery, temperature, network devices, and other important device information in an organized way.
 
-It can also generate a complete **HTML + PDF device inspection report** inside the normal user's `~/Downloads` directory.
+The tool is especially useful when you are **buying a new or second-hand laptop that already has Linux installed**. Instead of relying only on the specifications provided by a seller, you can use LinuxDeviceInspector to inspect what the Linux system actually detects.
 
-> Built by **[Manoj Bhatta](https://github.com/mrmanojbhatta)** for Linux system inspection, hardware research, troubleshooting, and educational use.
+**Created by:** Manoj Bhatta
+**Website:** manoj-bhatta.com.np
 
----
+## About
 
-## Features
+When buying a laptop, the specifications shown by a seller, advertisement, sticker, or online listing may not provide the complete technical picture.
 
-* System overview
-* CPU information
-* Memory information
-* Kernel and OS information
-* BIOS / UEFI information
-* Motherboard information
-* DMI hardware information
-* PCI device inventory
-* USB device inventory
-* Storage device inventory
-* Filesystem usage
-* Mounted filesystem information
-* HDD/SSD SMART health
+LinuxDeviceInspector gives you a practical way to inspect the hardware detected by Linux.
+
+It can help you check:
+
+* Manufacturer and model
+* CPU and architecture
+* RAM
+* Motherboard and firmware information
+* PCI devices
+* USB devices
+* SSD/HDD storage
 * NVMe health information
-* Battery information
-* Battery cycle count
-* Estimated battery health
-* AC power status
-* Thermal zone information
-* CPU frequency information
-* CPU and memory process usage
-* Network interfaces
-* Network link status
-* Default route
-* DNS configuration
-* Wireless information
-* Internet connectivity check
-* DNS resolution check
-* Diagnostic-tool availability check
-* Interactive menu
-* Complete HTML report
-* Complete PDF report
-* Normal-user report ownership even when executed with `sudo`
-
----
-
-## Menu
-
-When the program starts, it provides the following menu:
-
-```text
-======================================================================
-              MANOJ BHATTA // LINUX DEVICE INSPECTOR
-======================================================================
-
-  1. System Overview
-  2. Complete Device Information
-  3. Storage & Health
-  4. Battery & Power
-  5. Performance & Temperature
-  6. Network & Connectivity
-  7. Quick Check
-  8. Save Complete Report
-  9. Exit
-
-======================================================================
-```
-
-### 1. System Overview
-
-Provides a quick overview of the operating system and basic hardware.
-
-It displays:
-
-* Hostname
-* Date and time
-* Kernel
-* Architecture
-* Operating system
-* Uptime
-* CPU information
-* Memory usage
-* Root filesystem usage
-
----
-
-### 2. Complete Device Information
-
-Provides a more detailed hardware inventory.
-
-It checks:
-
-```text
-System
-DMI / System Hardware
-BIOS / UEFI
-Motherboard
-CPU
-Memory
-PCI Devices
-USB Devices
-Block Devices
-```
-
-Depending on the hardware and installed utilities, information exposed by firmware and Linux may include model names, serial numbers, firmware information, memory modules, PCI devices, USB devices, and storage information.
-
----
-
-### 3. Storage & Health
-
-Designed for storage inspection.
-
-It checks:
-
-```text
-Block Devices
-Filesystem Usage
-Mounted Filesystems
-SMART Disk Health
-NVMe Health
-```
-
-The storage section uses `lsblk`, `df`, `findmnt`, `smartctl`, and `nvme` when available.
-
-### SMART
-
-If `smartctl` is installed, the program checks supported physical disks for health information.
-
-Relevant information may include:
-
-```text
-SMART overall health
-Temperature
-Percentage Used
-Available Spare
-Critical Warning
-Power On Hours
-Unsafe Shutdowns
-Media/Data Integrity
-Error Information
-Reallocated sectors
-Pending sectors
-Uncorrectable sectors
-```
-
-The exact information depends on the storage device.
-
-### NVMe
-
-If `nvme-cli` is installed, the program uses:
-
-```bash
-nvme smart-log
-```
-
-The script intentionally does **not** run:
-
-```bash
-nvme id-ctrl
-```
-
-This prevents unnecessary NVMe controller-identification output such as:
-
-```text
-IDENTIFY CONTROLLER
-vid
-ssvid
-```
-
-The NVMe section focuses on health information such as:
-
-```text
-critical_warning
-temperature
-available_spare
-percentage_used
-data_units_read
-data_units_written
-host_read_commands
-host_write_commands
-controller_busy_time
-power_cycles
-power_on_hours
-unsafe_shutdowns
-media_errors
-num_err_log_entries
-warning_temp_time
-critical_comp_time
-```
-
----
-
-### 4. Battery & Power
-
-Designed especially for laptops and other Linux systems that expose battery information.
-
-It checks:
-
-* Battery manufacturer
-* Battery model
-* Battery serial
-* Battery technology
-* Battery status
-* Current capacity
-* Cycle count
-* Estimated battery health
-* AC/mains power status
-* Thermal zones
-
-Battery information is read from:
-
-```text
-/sys/class/power_supply/
-```
-
-The tool can calculate an estimated battery health percentage when Linux exposes design and current full-capacity values.
-
-For example:
-
-```text
-Estimated Health = Full Capacity / Design Capacity × 100
-```
-
-If no battery is exposed by the system:
-
-```text
-No battery detected.
-```
-
----
-
-### 5. Performance & Temperature
-
-Provides a lightweight snapshot of current system activity.
-
-It checks:
-
-* System uptime
-* Load average
-* CPU information
-* Memory usage
-* Swap
-* CPU frequency
+* SMART information
+* Battery condition
+* Battery capacity
 * Temperature sensors
-* Top CPU processes
-* Top memory processes
+* Network adapters
+* Wi-Fi hardware
+* Ethernet hardware
+* Filesystems and disk usage
+* Basic network and DNS connectivity
 
-CPU frequency information is read from Linux CPU frequency interfaces when available.
+The project is **open source** and intended for learning, system inspection, troubleshooting, and practical laptop checking.
 
-If `lm-sensors` is installed, the program also uses:
+## Why This Tool?
 
-```bash
-sensors
-```
+If you are buying a laptop with Linux already installed, you can run this tool before purchasing it.
 
-The process lists are generated using:
-
-```bash
-ps
-```
-
-This is a system snapshot, not a benchmark or stress test.
-
----
-
-### 6. Network & Connectivity
-
-Provides basic network information and connectivity checks.
-
-It checks:
+For example, a seller may advertise:
 
 ```text
-Network Interfaces
-Network Links
-Default Route
-DNS
-Wireless
-Network Hardware
-Internet Connectivity
-DNS Resolution
+Core i5
+8 GB RAM
+512 GB SSD
+Good Battery
 ```
 
-The program uses tools such as:
+LinuxDeviceInspector lets you inspect the system instead of depending only on those claims.
 
-```bash
-ip
-resolvectl
-iw
-lspci
-ping
-getent
-```
+You can check the detected CPU, memory, storage, battery information, hardware devices, temperatures, and other available system information.
 
-Internet connectivity is tested against:
+This is particularly useful for:
 
-```text
-1.1.1.1
-```
-
-DNS resolution is tested using:
-
-```text
-example.com
-```
-
-These tests only confirm whether connectivity/resolution worked at the time of execution.
-
----
-
-### 7. Quick Check
-
-Provides a compact overview for quickly checking the current machine.
-
-It includes:
-
-```text
-Operating System
-Kernel
-Architecture
-CPU
-Memory
-Storage
-Battery
-Temperature
-Network
-Internet Connectivity
-Diagnostic Tools
-```
-
-It also checks whether these utilities are available:
-
-```text
-smartctl
-nvme-cli
-sensors
-dmidecode
-```
-
-For a fast inspection, this is the recommended menu option.
-
----
-
-### 8. Save Complete Report
-
-Generates the complete inspection report.
-
-The report is stored under:
-
-```text
-~/Downloads/
-```
-
-The directory uses this format:
-
-```text
-Manoj_Device_Report_<HOST>_<TIMESTAMP>/
-```
-
-Example:
-
-```text
-~/Downloads/Manoj_Device_Report_my-pc_20260914_131200/
-```
-
-The directory contains exactly two final report files:
-
-```text
-Manoj_Device_Report.html
-Manoj_Device_Report.pdf
-```
-
-No TXT report is intentionally created.
-
----
-
-## Report Structure
-
-The generated report contains:
-
-```text
-Manoj_Device_Report_<HOST>_<TIMESTAMP>/
-│
-├── Manoj_Device_Report.html
-└── Manoj_Device_Report.pdf
-```
-
-The HTML report contains the complete inspection results in a structured interface.
-
-The PDF is generated from the HTML report.
-
----
-
-## PDF Generation
-
-The script automatically looks for a supported HTML-to-PDF converter.
-
-It attempts:
-
-```text
-1. wkhtmltopdf
-2. weasyprint
-3. libreoffice
-4. soffice
-```
-
-The first working converter is used.
-
-If PDF generation fails, the HTML report is preserved.
-
-The script does not create a TXT fallback.
-
----
-
-## Requirements
-
-The basic script uses standard Linux utilities.
-
-For the most complete hardware inspection, install:
-
-```bash
-sudo apt update
-sudo apt install dmidecode pciutils usbutils smartmontools nvme-cli lm-sensors
-```
-
-For PDF generation, install at least one supported converter.
-
-For example:
-
-```bash
-sudo apt install wkhtmltopdf
-```
-
-or:
-
-```bash
-sudo apt install libreoffice
-```
-
-Package names may differ between Linux distributions.
-
----
+* New laptop inspection
+* Second-hand laptop inspection
+* Refurbished laptop inspection
+* Linux hardware identification
+* Storage health checking
+* Battery condition checking
+* Basic thermal inspection
+* Technical documentation
 
 ## Installation
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/mrmanojbhatta/LinuxDeviceInspector.git
-```
-
-Enter the directory:
-
-```bash
+git clone <repository-url>
 cd LinuxDeviceInspector
 ```
 
@@ -470,613 +86,181 @@ Run it:
 ./linuxdeviceinspector.sh
 ```
 
-The script automatically requests `sudo` when necessary.
-
-You can also run it directly with:
+For additional hardware information, install the recommended diagnostic utilities:
 
 ```bash
-sudo ./linuxdeviceinspector.sh
+sudo apt update
+sudo apt install dmidecode pciutils usbutils smartmontools nvme-cli lm-sensors
 ```
 
----
+## Characteristics
 
-## Quick Start
+LinuxDeviceInspector is designed to be:
 
-For a normal installation:
+* **Open source**
+* **Read-only**
+* **Linux-focused**
+* **Buyer-oriented**
+* **Terminal-based**
+* **Organized by inspection categories**
+* **Focused on useful hardware information**
+* **Suitable for new and second-hand laptop inspection**
+* **Capable of generating HTML and PDF reports**
+* **Designed to avoid unnecessary raw hardware output**
 
-```bash
-git clone https://github.com/mrmanojbhatta/LinuxDeviceInspector.git
-cd LinuxDeviceInspector
-chmod +x linuxdeviceinspector.sh
-./linuxdeviceinspector.sh
-```
+The tool does not intentionally modify hardware configuration or system settings.
 
-Then select:
+## Features
 
-```text
-7
-```
+### 1. System Overview
 
-for a quick inspection.
+Quickly inspect the major characteristics of the Linux system:
 
-For the complete HTML + PDF report:
+* Operating system
+* Kernel
+* Architecture
+* Hostname
+* CPU
+* Memory
+* Disk usage
+* Basic system information
 
-```text
-8
-```
+### 2. Complete Device Information
 
----
+Inspect detailed hardware information:
 
-## Why Does the Script Use sudo?
+* System manufacturer
+* System model
+* BIOS/UEFI
+* CPU
+* PCI devices
+* USB devices
+* Block devices
+* Filesystems
+* Mount points
 
-Some hardware information requires elevated privileges.
+### 3. Storage & Health
 
-For example:
+Inspect available storage information:
 
-```bash
-dmidecode
-```
+* SSD/HDD
+* NVMe devices
+* Capacity
+* Model information
+* SMART information
+* NVMe health information
+* Temperature
+* Power-on information when available
+* Error information when available
 
-may require root access to read firmware/DMI information.
+The exact information depends on the storage hardware and permissions available to Linux.
 
-The script therefore detects whether it is already running as root.
+### 4. Battery & Power
 
-If not, it automatically re-executes itself through:
+For laptops, inspect available battery information:
 
-```bash
-sudo
-```
+* Battery presence
+* Battery capacity
+* Design capacity
+* Full-charge capacity
+* Charging state
+* Estimated battery health
+* Power information
 
-This allows privileged diagnostic information to be collected.
+Battery health is an estimate based on information exposed by the operating system.
 
----
+### 5. Performance & Temperature
 
-## Normal User Ownership
+Inspect basic system performance and thermal information:
 
-The report system is designed to avoid leaving generated files owned by `root`.
+* CPU information
+* Memory usage
+* System load
+* Temperature sensors
+* Sensor readings
+* Running processes
 
-When the program is launched by a normal user and escalates through `sudo`, it remembers the original user and home directory.
+This is an inspection tool, not a benchmark.
 
-Reports are then created in:
+### 6. Network & Connectivity
 
-```text
-/home/<user>/Downloads/
-```
+Inspect detected network hardware and basic connectivity:
 
-and ownership is restored to the normal user.
+* Network interfaces
+* IP information
+* Wi-Fi information when available
+* Ethernet information
+* Basic internet connectivity
+* DNS resolution
 
-The intended result is:
+### 7. Quick Check
 
-```text
-user:user
-```
+Perform a faster inspection of important system components without generating a complete report.
 
-rather than:
+### 8. Save Complete Report
 
-```text
-root:root
-```
+Generate a complete organized report containing the inspection results.
 
-This makes the generated reports easier to open, edit, move, or delete from the normal desktop session.
-
----
-
-## Read-Only Design
-
-LinuxDeviceInspector is designed as a **read-only inspection tool**.
-
-It reads information exposed by Linux, firmware, hardware interfaces, and installed diagnostic utilities.
-
-It does not intentionally:
-
-```text
-Format disks
-Create partitions
-Delete partitions
-Create filesystems
-Modify BIOS/UEFI
-Flash firmware
-Modify hardware configuration
-Run disk repair
-Delete user files
-Perform disk write tests
-```
-
-Storage health commands such as SMART and NVMe health queries are diagnostic operations intended to retrieve information from the device.
-
-Always review any script before executing it with root privileges.
-
----
-
-## What the Tool Can Detect
-
-Depending on the hardware and Linux environment, the tool can expose information about:
-
-```text
-Operating System
-Kernel
-CPU
-RAM
-Motherboard
-BIOS / UEFI
-PCI Devices
-USB Devices
-HDD
-SSD
-NVMe
-Filesystems
-Mount Points
-Battery
-AC Power
-Thermal Sensors
-CPU Frequency
-Running Processes
-Network Interfaces
-Wireless Interfaces
-DNS
-Routing
-Internet Connectivity
-```
-
-The exact fields available depend on the system.
-
----
-
-## Important: Missing Information
-
-Not every Linux system exposes every hardware field.
-
-You may see:
-
-```text
-Unknown
-```
-
-or:
-
-```text
-information unavailable
-```
-
-or:
-
-```text
-not installed
-```
-
-This does not automatically indicate a hardware problem.
-
-Possible reasons include:
-
-* Hardware does not expose the information
-* Firmware does not provide the information
-* Kernel limitations
-* Unsupported hardware
-* Missing diagnostic utility
-* Permission restrictions
-* Virtualized hardware
-* Vendor-specific implementation
-
-LinuxDeviceInspector reports available information rather than inventing values.
-
----
-
-## Hardware Authenticity Disclaimer
-
-LinuxDeviceInspector can help inspect a used or second-hand computer, but it does **not** certify hardware authenticity.
-
-For example, if the tool reports:
-
-```text
-Model: Example SSD
-```
-
-that does not prove that the SSD was installed by the original manufacturer.
-
-Likewise, DMI information may sometimes be incomplete, generic, modified, or inaccurate.
-
-For second-hand device inspection, combine this tool with:
-
-* Physical inspection
-* Manufacturer documentation
-* SMART/NVMe health
-* Firmware information
-* Storage information
-* Battery information
-* Appropriate hardware tests
-
----
-
-## Privacy Warning
-
-The generated report may contain sensitive machine information.
-
-Depending on the system, the report may contain:
-
-```text
-Hostname
-Hardware Serial Numbers
-Storage Serial Numbers
-Battery Serial Numbers
-Filesystem UUIDs
-IP Addresses
-Network Information
-Process Information
-Hardware Identifiers
-BIOS Information
-```
-
-Before sharing the HTML or PDF publicly, review and redact sensitive information.
-
-Do not upload an unredacted report to GitHub, social media, forums, Discord, or other public platforms unless you intentionally want those details to be public.
-
----
-
-## Virtual Machines
-
-The tool can run inside virtual machines.
-
-However, the reported hardware may represent virtualized hardware rather than the physical host.
-
-For example:
-
-```text
-CPU
-RAM
-Storage
-PCI devices
-DMI
-Network hardware
-```
-
-may not represent the actual physical components.
-
-For physical hardware inspection, run the tool directly on the physical Linux installation when possible.
-
----
-
-## Diagnostic Tools
-
-The following utilities provide additional information when installed:
-
-| Utility                      | Purpose                              |
-| ---------------------------- | ------------------------------------ |
-| `dmidecode`                  | DMI / BIOS / motherboard information |
-| `pciutils` / `lspci`         | PCI device information               |
-| `usbutils` / `lsusb`         | USB device information               |
-| `smartmontools` / `smartctl` | HDD/SSD SMART information            |
-| `nvme-cli` / `nvme`          | NVMe health information              |
-| `lm-sensors` / `sensors`     | Temperature and sensor information   |
-| `iw`                         | Wireless interface information       |
-| `iproute2` / `ip`            | Network configuration                |
-| `procps` / `ps`              | Process information                  |
-
----
-
-## Troubleshooting
-
-### `dmidecode` not installed
-
-```bash
-sudo apt install dmidecode
-```
-
-### `lspci` not installed
-
-```bash
-sudo apt install pciutils
-```
-
-### `lsusb` not installed
-
-```bash
-sudo apt install usbutils
-```
-
-### `smartctl` not installed
-
-```bash
-sudo apt install smartmontools
-```
-
-### `nvme` not installed
-
-```bash
-sudo apt install nvme-cli
-```
-
-### `sensors` not installed
-
-```bash
-sudo apt install lm-sensors
-```
-
-### PDF is not generated
-
-Install one of the supported converters:
-
-```bash
-sudo apt install wkhtmltopdf
-```
-
-or:
-
-```bash
-sudo apt install libreoffice
-```
-
-Then select:
-
-```text
-8. Save Complete Report
-```
-
-again.
-
----
-
-## Example Workflow
-
-### Quick device check
-
-```text
-Start
-  ↓
-7. Quick Check
-  ↓
-Review basic system status
-  ↓
-Return to menu
-```
-
-### Storage inspection
-
-```text
-Start
-  ↓
-3. Storage & Health
-  ↓
-Review disks
-  ↓
-Review SMART
-  ↓
-Review NVMe health
-```
-
-### Complete report
-
-```text
-Start
-  ↓
-8. Save Complete Report
-  ↓
-Collect system information
-  ↓
-Collect hardware information
-  ↓
-Collect storage information
-  ↓
-Collect battery information
-  ↓
-Collect performance information
-  ↓
-Collect network information
-  ↓
-Generate HTML
-  ↓
-Generate PDF
-  ↓
-Apply normal-user ownership
-  ↓
-HTML + PDF
-```
-
----
-
-## Project Structure
-
-```text
-LinuxDeviceInspector/
-│
-├── linuxdeviceinspector.sh
-└── README.md
-```
-
-Generated reports are stored outside the repository:
+The report is saved under:
 
 ```text
 ~/Downloads/
 ```
 
----
-
-## Use Cases
-
-LinuxDeviceInspector can be useful for:
-
-* Linux troubleshooting
-* Laptop inspection
-* Desktop inspection
-* Second-hand computer checking
-* Storage health inspection
-* Battery inspection
-* Hardware inventory
-* System administration
-* Linux learning
-* Hardware research
-* Creating device reports
-* Technical documentation
-* Educational demonstrations
-
----
-
-## Limitations
-
-LinuxDeviceInspector is an inspection and reporting tool.
-
-It does not currently provide:
+The final report directory contains:
 
 ```text
-CPU Stress Testing
-GPU Benchmarking
-RAM Stress Testing
-Disk Write Benchmarking
-Filesystem Repair
-Disk Repair
-SMART Self-Tests
-NVMe Self-Tests
-Port Scanning
-Vulnerability Scanning
-Malware Detection
-Firmware Authenticity Certification
-Hardware Authenticity Certification
+Manoj_Device_Report.html
+Manoj_Device_Report.pdf
 ```
 
-Its purpose is to collect and organize information already exposed by the operating system and supported diagnostic utilities.
+Only these two final report files are generated.
 
----
+## Open Source
 
-## Security Philosophy
+LinuxDeviceInspector is an **open-source project created by Manoj Bhatta**.
 
-The project follows a simple principle:
+The project is intended to be useful for Linux users, students, developers, system administrators, cybersecurity learners, technicians, and anyone who wants to understand the hardware detected by their Linux system.
 
-```text
-READ
- ↓
-INSPECT
- ↓
-FILTER
- ↓
-DISPLAY
- ↓
-REPORT
-```
+You are encouraged to inspect the source code, learn from it, improve it, and contribute to the project according to the repository's licensing terms.
 
-The objective is useful system information without unnecessary command output.
+## Created By
 
-For example, the NVMe inspection focuses on health information instead of dumping the complete NVMe controller-identification data.
+**Manoj Bhatta**
 
----
+Cybersecurity Enthusiast | Ethical Hacker | Security Researcher | OSINT Researcher | Full-Stack Web Developer
 
-## Contributing
+Website:
 
-Contributions and improvements are welcome.
+**manoj-bhatta.com.np**
 
-If you want to contribute:
+Project:
 
-```bash
-git clone https://github.com/mrmanojbhatta/LinuxDeviceInspector.git
-cd LinuxDeviceInspector
-```
+**LinuxDeviceInspector**
 
-Create a branch:
+The project is part of Manoj Bhatta's work in Linux, cybersecurity, system inspection, hardware analysis, and open-source tooling.
 
-```bash
-git checkout -b feature/your-feature
-```
+## Important Limitation
 
-Test your changes on a real Linux system.
+LinuxDeviceInspector reports information that Linux and available hardware interfaces expose.
 
-Then commit:
+It cannot prove that:
 
-```bash
-git add .
-git commit -m "Add your feature"
-```
+* Every component is factory-original
+* A component has never been replaced
+* A laptop has never been repaired
+* A seller's specifications are completely truthful
+* The hardware has no physical damage
+* The device will not fail in the future
 
-Push your branch:
+For a serious laptop purchase, combine the report with physical inspection, serial/warranty verification where appropriate, display testing, keyboard testing, port testing, charger testing, and other hardware checks.
 
-```bash
-git push origin feature/your-feature
-```
-
-Then open a Pull Request.
-
-### Contribution guidelines
-
-Please keep contributions:
-
-* Read-only where possible
-* Safe for normal Linux systems
-* Compatible with Bash
-* Graceful when optional commands are missing
-* Free from unnecessary output
-* Clearly documented
-
-Do not add destructive operations without a clear project requirement and explicit documentation.
-
----
-
-## Bug Reports
-
-If you discover a problem, include:
-
-```text
-Linux Distribution:
-Kernel:
-Architecture:
-Hardware:
-Shell:
-Command / Menu Option:
-Expected Result:
-Actual Result:
-Error:
-```
-
-Before posting logs publicly, remove sensitive information such as:
-
-```text
-Serial Numbers
-MAC Addresses
-Private IP Addresses
-Filesystem UUIDs
-Battery Serial Numbers
-```
-
----
+LinuxDeviceInspector is a **hardware inspection tool**, not a hardware authenticity guarantee.
 
 ## Author
 
 **Manoj Bhatta**
 
-GitHub:
+Website: **manoj-bhatta.com.np**
 
-https://github.com/mrmanojbhatta
-
-Repository:
-
-https://github.com/mrmanojbhatta/LinuxDeviceInspector
-
----
-
-## Project
-
-**LinuxDeviceInspector**
-
-A practical Bash-based Linux device inspection and reporting utility.
-
-```text
-MANOJ BHATTA // LINUX DEVICE INSPECTOR
-
-Inspect.
-Understand.
-Document.
-```
-
----
-
-## License
-
-This repository currently does not specify a license.
-
-If you want others to legally reuse, modify, and redistribute the project, add an appropriate open-source license to the repository.
-
-For example, if you choose MIT:
-
-```text
-LICENSE
-```
-
-should be added to the repository with the official MIT License text.
-
-Until a license is added, the default copyright rules generally apply to the repository's original code.
+Open-source project: **LinuxDeviceInspector**
